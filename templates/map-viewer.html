@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>colorMapSAT</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+        <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+    </head>
+    <body>
+          <div class="nav clearfix">
+                <select id="select-one" class="select-one" onchange="changeCountry(this.value)">
+                    <option value="">Select a country</option>
+                    <option value="cr">Costa Rica</option>
+                    <option value="ch">Switzerland</option>
+                    <option value="us">United States of America</option>
+                </select>
+                <label>How many colors?
+                    <input id="input-one" class="input-one" type="number" min="1" max="100" step="1" value="{{ colors }}" maxlength="4"
+                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength); newColors = this.value">
+                </label>
+                <button id="validate-one" class="validate-one sat-this">SAT this!</button>
+            </div>
+        <div class="titles">
+            <h1 id="title" class="clearfix"></h1>
+            <h2 id="subtitle"></h2>
+        </div>
+        <div class="grid">
+            <div id="container" class=""></div>
+            <div class="buttons">
+                <p class="download">Download files</p>
+                <button id="sat" class="get-file">SAT result</button>
+                <button id="cnf" class="get-file">CNF</button>
+                <button id="assignments" class="get-file">Assignments</button>
+            </div>
+            <div class="credits">
+                <span>Copyright &copy; 2022. Brian Bronz, Erick Garro, and Lorenzo Zaniol. Using Z3 and SAT clause generator by Martin Blicha. ToC @USI, Switzerland</span>
+            </div>
+        </div>
+    </body>
+        <script type="text/javascript">
+            (async () => {
+    const filename = 'sol_{{country}}_{{colors}}.json';
+    const response = await fetch('/data/' + filename);
+    const solution = await response.json();
+
+    const title = document.getElementById('title');
+    const subtitle = document.getElementById('subtitle');
+    title.innerHTML = 'colorMapSAT for ' +  solution.topology.title;
+    {#subtitle.innerHTML = 'with {{ colors }} colors';#}
+    subtitle.innerHTML = solution.sat[0].split(' ')[1];
+
+    const dataLabels = {
+                enabled: true,
+                format: '{point.name}'
+    };
+
+    let datapoints = [];
+
+    document.getElementById('cnf').addEventListener('click', () => download('cnf', solution.cnf));
+    document.getElementById('sat').addEventListener('click', () => download('sat', solution.sat));
+    document.getElementById('assignments').addEventListener('click', () => download('assignments', solution.facts));
+    document.getElementById('select-one').value = '{{ country }}';
+    document.getElementById('validate-one').addEventListener('click', () => {
+        let newColor = document.getElementById('input-one').value;
+        let newCountry = document.getElementById('select-one').value;
+        window.location.href = '/' + newCountry + '/' + newColor;
+        document.getElementById('validate-one').disabled = true;
+        document.getElementById('validate-one').classList.add('disabled');
+        document.getElementById('validate-one').innerHTML = 'Solving...';
+    });
+
+        document.getElementById('select-one').addEventListener('change', () => {
+        let satThisButton = document.getElementById('validate-one');
+        if (document.getElementById('select-one').value === '') {
+            satThisButton.disabled = true;
+            satThisButton.classList.add('disabled');
+        } else {
+            satThisButton.classList.remove('disabled');
+            satThisButton.disabled = false;
+        }
+    });
+    
+    function download(filetype, _data) {
+        let text = '';
+
+        const a = document.createElement('a');
+        let _filename = '';
+
+        switch (filetype) {
+            case 'cnf':
+                text = _data.join('');
+                _filename = solution.country + '_' + solution.colors + '_colors' + '.cnf';
+                break;
+            case 'sat':
+                text = _data.join('\n');
+                _filename = solution.country + '_' + solution.colors + '_sat_result' + '.txt';
+                break;
+            case 'assignments':
+                text = _data.join('\n');
+                _filename = solution.country + '_' + solution.colors + '_sat_assignments' + '.txt';
+                break;
+            default:
+                console.log('error');
+        }
+
+        const blob = new Blob([text], {type: 'text/plain'});
+        a.href = URL.createObjectURL(blob);
+        a.download = _filename;
+        a.click();
+    }
+
+    for (let i = 0; i < solution.data.length; i++) {
+        let data = solution.data[i].map(code => ({ code }))
+        let series_label = '';
+        if (solution.data.length > 1) {
+            series_label = 'Color ' + (i + 1);
+        }
+
+        let color_entry = {
+            dataLabels: dataLabels,
+            name: series_label,
+            data:  data,
+            color: solution.hexColors[i]
+        }
+        datapoints.push(color_entry);
+    }
+
+    const topology = solution.topology;
+
+    let n_nodes = solution.topology.features.length;
+    let min_colors = solution.data.length;
+
+    let n_colors = {{ colors }};
+    let colors_text = 'color';
+    if (n_colors > 1) {
+        colors_text = 'colors'
+    }
+
+    let solvingFor = 'Solving for ' + n_nodes + ' nodes with {{ colors }} ' + colors_text + ' colors. Optimal: ' + min_colors + ' colors.';
+
+    if(solution.sat[0] == 's UNSATISFIABLE') {
+        solvingFor = 'Cannot solve for ' + n_nodes + ' nodes with {{ colors }} ' + colors_text + ' only. Try again!';
+        subtitle.classList.add('unsat');
+        document.getElementById('assignments').disabled = true;
+        document.getElementById('assignments').classList.add('disabled');
+
+    } else {
+        subtitle.classList.add('sat');
+        document.getElementById('assignments').disabled = false;
+        document.getElementById('assignments').classList.remove('disabled');
+    }
+
+
+    // Instantiate the map
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology,
+            spacingBottom: 20
+        },
+        title: {
+            text: solvingFor
+        },
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+        accessibility: {
+            series: {
+                descriptionFormat: 'Color group {series.name}'
+            },
+            point: {
+                valueDescriptionFormat: '{point.code}.'
+            }
+        },
+        legend: {
+            enabled: true
+        },
+        plotOptions: {
+            map: {
+                allAreas: false,
+                joinBy: ['postal-code', 'code'],
+                dataLabels: {
+                    enabled: true,
+                    color: '#ffffff',
+                    style: {
+                        fontWeight: 'bold'
+                    },
+                    // Only show dataLabels for areas with high label rank
+                    format: null,
+                    formatter: function () {
+                        if (
+                            this.point.properties &&
+                            this.point.properties.labelrank.toString() < 5
+                        ) {
+                            return this.point.properties['postal-code'];
+                        }
+                    }
+                },
+                tooltip: {
+                    headerFormat: '',
+                    pointFormat: '{point.name}: <b>{series.name}</b>'
+                }
+            }
+        },
+
+        series: datapoints
+    });
+
+})();
+        </script>
+</html>
