@@ -243,7 +243,7 @@ def run_sat(country, colors):  # put application's code here
     f.close()
 
     # cleanup CNF
-    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
+    # os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
 
     return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
 
