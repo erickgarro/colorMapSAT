@@ -224,8 +224,6 @@ def run_sat(country, colors):  # put application's code here
         lines = f.readlines()
     f.close()
 
-    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
-
     #read topology json file
     with open(os.getcwd() + "/static/" + country + "-all.geo.json", "r") as f:
         topology = json.load(f)
@@ -243,6 +241,9 @@ def run_sat(country, colors):  # put application's code here
     with open(os.getcwd() + "/static/" + filename, "w") as f:
         json.dump(solutions, f)
     f.close()
+
+    # cleanup CNF
+    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
 
     return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
 
