@@ -104,7 +104,7 @@
         colors_text = 'colors'
     }
 
-    let solvingFor = 'Solving for ' + n_nodes + ' nodes with {{ colors }} ' + colors_text + ' colors. Optimal: ' + min_colors + ' colors.';
+    let solvingFor = 'Solving for ' + n_nodes + ' nodes with {{ colors }} ' + colors_text + '. Showing optimal: ' + min_colors + ' colors.';
 
     if(solution.sat[0] == 's UNSATISFIABLE') {
         solvingFor = 'Cannot solve for ' + n_nodes + ' nodes with {{ colors }} ' + colors_text + ' only. Try again!';
