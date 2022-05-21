@@ -18,7 +18,7 @@ pip install -r requirements.txt
 
 ## Usage:
 You can try it on your machine or on the cloud. \
-View the online demo: [https://mapsat.erickgarro.com](https://mapsat.erickgarro.com)
+View the online demo: [https://colors.erickgarro.com](https://colors.erickgarro.com)
 
 ### For local / Mac execution:
 Use the `main` branch.
