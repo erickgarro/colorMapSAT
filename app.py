@@ -237,7 +237,7 @@ def run_sat(country, colors):  # put application's code here
     f.close()
 
     #read topology json file
-    sys.path.insert(1, "../static/")
+    # sys.path.insert(1, "../static/")
     with open(country + "-all.geo.json", "r") as f:
         topology = json.load(f)
     f.close()
