@@ -2,6 +2,7 @@ import json
 import os
 import random
 import datetime
+import platform
 
 from flask import Flask, render_template, send_from_directory, json
 from subprocess import Popen
@@ -166,8 +167,12 @@ def run_sat(country, colors):  # put application's code here
     fl.write("\n".join([head, rls]))
     fl.close()
 
+    z3_build = './z3_linux '
+    if platform.system() == 'Darwin':
+        z3_build = './z3_mac '
+
     # this is for running SATsolver
-    ms_out = Popen(["./z3 " + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"], stdout=PIPE, shell=True).communicate()[0]
+    ms_out = Popen([z3_build + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"], stdout=PIPE, shell=True).communicate()[0]
 
     # SATsolver with these arguments writes the solution to a file called "solution".  Let's check it
     res = ms_out.decode('utf-8')
@@ -203,21 +208,21 @@ def run_sat(country, colors):  # put application's code here
             node_name = nodes_ids[int(f[0])]
             nodes_colors[int(f[1])].append(node_name)
 
-        # remove empty indexes in nodes_colors
-        nodes_colors = [x for x in nodes_colors if x]
+    # remove empty indexes in nodes_colors
+    nodes_colors = [x for x in nodes_colors if x]
 
-        if res[0] == "s UNSATISFIABLE":
-            nodes_names = []
-            solutions['facts'] = []
-            for val in nodes_ids.values():
-                nodes_names.append(val)
-            nodes_colors = [nodes_names]
-            solutions['hexColors'] = []
-            solutions['hexColors'].append('#a8a8a8')
-        else:
-            solutions['facts'] = facts_solutions
-            solutions['nodesColor'] = nodes_colors
-            solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
+    if res[0] == "s UNSATISFIABLE":
+        nodes_names = []
+        solutions['facts'] = []
+        for val in nodes_ids.values():
+            nodes_names.append(val)
+        nodes_colors = [nodes_names]
+        solutions['hexColors'] = []
+        solutions['hexColors'].append('#a8a8a8')
+    else:
+        solutions['facts'] = facts_solutions
+        solutions['nodesColor'] = nodes_colors
+        solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
 
     # read cnf file
     with open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
@@ -243,7 +248,7 @@ def run_sat(country, colors):  # put application's code here
     f.close()
 
     # cleanup CNF
-    # os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
+    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
 
     return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
 
