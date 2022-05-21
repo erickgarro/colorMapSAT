@@ -251,7 +251,7 @@ def run_sat(country, colors):  # put application's code here
 
     # save solutions to disk in static folder
     filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
-    with open(filename, "w") as f:
+    with open("static/" + filename, "w") as f:
         json.dump(solutions, f)
     f.close()
 
