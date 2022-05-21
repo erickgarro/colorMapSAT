@@ -135,7 +135,6 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-
 @app.route('/data/<filename>')
 def data(filename):
     return send_from_directory('static', filename)

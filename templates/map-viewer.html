@@ -42,12 +42,11 @@
             (async () => {
     const filename = 'sol_{{country}}_{{colors}}_{{ timestamp }}.json';
     const response = await fetch('/data/' + filename);
-    const solution = await response.json();
+    const solution = await response.json()
 
     const title = document.getElementById('title');
     const subtitle = document.getElementById('subtitle');
     title.innerHTML = 'colorMapSAT for ' +  solution.topology.title;
-    {#subtitle.innerHTML = 'with {{ colors }} colors';#}
     subtitle.innerHTML = solution.sat[0].split(' ')[1];
 
     const dataLabels = {
