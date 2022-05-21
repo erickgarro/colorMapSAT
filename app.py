@@ -163,7 +163,7 @@ def run_sat(country, colors):  # put application's code here
     timestamp = str(datetime.datetime.now().timestamp()).replace(".", "")
 
     # here we create the cnf file for SATsolver
-    fl = open(sys.path[0] + '/' + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "w")
+    fl = open(country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "w")
     fl.write("\n".join([head, rls]))
     fl.close()
 
@@ -232,12 +232,13 @@ def run_sat(country, colors):  # put application's code here
     #     solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
 
     # read cnf file
-    with open(sys.path[0] + '/' + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
+    with open(country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
         lines = f.readlines()
     f.close()
 
     #read topology json file
-    with open(sys.path[0] + "/static/" + country + "-all.geo.json", "r") as f:
+    sys.path.insert(1, "../static/")
+    with open(country + "-all.geo.json", "r") as f:
         topology = json.load(f)
     f.close()
 
@@ -250,12 +251,12 @@ def run_sat(country, colors):  # put application's code here
 
     # save solutions to disk in static folder
     filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
-    with open(sys.path[0] + "/static/" + filename, "w") as f:
+    with open(filename, "w") as f:
         json.dump(solutions, f)
     f.close()
 
     # cleanup CNF
-    os.remove(sys.path[0] + '/' + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
+    os.remove(country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
 
     return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
 
