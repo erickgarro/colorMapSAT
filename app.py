@@ -101,7 +101,7 @@ def write_dict_to_csv(_filename, _dict):
     :param _dict:      the nodes dictionary
     """
     global f
-    with open(sys.path[0] + '/' + _filename.lower() + ".csv", "w") as f:
+    with open(_filename.lower() + ".csv", "w") as f:
         for key in _dict.keys():
             f.write(str(key) + "," + str(_dict[key])[1:-1].replace(" ", "").replace("'", "") + "\n")
     f.close()
