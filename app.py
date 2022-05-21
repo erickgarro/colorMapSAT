@@ -12,7 +12,6 @@ from subprocess import PIPE
 gbi = 0
 varToStr = ["invalid"]
 
-
 def generate_random_unique_colors(n_colors):
     """
     Generate random hex colors for each node
