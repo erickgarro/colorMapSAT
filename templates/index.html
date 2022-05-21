@@ -20,7 +20,77 @@
                     oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                 </label>
                 <button id="validate-one" class="validate-one sat-this disabled" disabled>SAT this!</button>
+            <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>colorMapSAT</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+        <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+    </head>
+    <body>
+          <div class="nav clearfix">
+                <select id="select-one" class="select-one">
+                    <option value="">Select a country</option>
+                    <option value="cr">Costa Rica</option>
+                    <option value="ch">Switzerland</option>
+                    <option value="us">United States of America</option>
+                </select>
+                <label>How many colors?
+                    <input id="input-one" class="input-one" type="number" min="1" max="100" step="1" value="1" maxlength="4"
+                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                </label>
+                <button id="validate-one" class="validate-one sat-this disabled" disabled>SAT this!</button>
             </div>
+        <div class="titles">
+            <h1 id="title" class="clearfix"></h1>
+            <h2 id="subtitle"></h2>
+            <div class="info">
+                <p>How many colors are needed to avoid neighbors having the same color? Choose a map and make your guess.</p>
+                <span>The <a href="https://en.wikipedia.org/wiki/SAT_solver" target="_blank">SAT solver</a> in this app uses Boolean logic to figure out if you're right, given the number of nodes (states, provinces, or cantons).</span>
+            </div>
+        </div>
+        <div class="grid">
+            <div id="container" class="">
+                <img id="map" class="map" src="{{ url_for('static', filename='map.svg') }}">
+            </div>
+            <div class="buttons">
+
+            </div>
+            <div class="credits">
+                <span>Copyright &copy; 2022. Brian Bronz, Erick Garro, and Lorenzo Zaniol. Using Z3 and SAT clause generator by Martin Blicha. ToC @USI, Switzerland</span>
+            </div>
+        </div>
+    </body>
+        <script type="text/javascript">
+            (async () => {
+    const title = document.getElementById('title');
+    const subtitle = document.getElementById('subtitle');
+    title.innerHTML = 'Welcome to colorMapSAT';
+    subtitle.innerHTML = "Let's SAT some maps!";
+
+    document.getElementById('validate-one').addEventListener('click', () => {
+    let newColor = document.getElementById('input-one').value;
+    let newCountry = document.getElementById('select-one').value;
+    window.location.href = '/' + newCountry + '/' + newColor;
+    });
+
+    document.getElementById('select-one').addEventListener('change', () => {
+        let satThisButton = document.getElementById('validate-one');
+        if (document.getElementById('select-one').value === '') {
+            satThisButton.disabled = true;
+            satThisButton.classList.add('disabled');
+        } else {
+            satThisButton.classList.remove('disabled');
+            satThisButton.disabled = false;
+        }
+    });
+
+})();
+        </script>
+</html>
+
         <div class="titles">
             <h1 id="title" class="clearfix"></h1>
             <h2 id="subtitle"></h2>
