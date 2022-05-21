@@ -52,9 +52,13 @@ The web app is tested to work on the [App Platform](https://docs.digitalocean.co
 1. Create an account
 2. Create a new App (we recommend a basic plan with 1vCPU and 512MB RAM).
 3. Choose the `digitalocean` branch as your source.
-4. Follow their instructions.
+4. Use this as your Run Command:
+```bash
+gunicorn --worker-tmp-dir /dev/shm --config gunicorn_config.py app:app
+```
+5. Follow their instructions to finalize the deployment.
+6. Visit your provided URL.
 
 Copyright © 2022. Brian Bronz, Erick Garro, and Lorenzo Zaniol. \
 Using Z3 and SAT clause generator by Martin Blicha. ToC @[USI](https://www.usi.ch), Switzerland\
 Other copyrights belong to their respective owners.
-
