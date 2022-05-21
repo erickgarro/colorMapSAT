@@ -206,43 +206,43 @@ def run_sat(country, colors):  # put application's code here
         # remove empty indexes in nodes_colors
         nodes_colors = [x for x in nodes_colors if x]
 
-    if res[0] == "s UNSATISFIABLE":
-        nodes_names = []
-        solutions['facts'] = []
-        for val in nodes_ids.values():
-            nodes_names.append(val)
-        nodes_colors = [nodes_names]
-        solutions['hexColors'] = []
-        solutions['hexColors'].append('#a8a8a8')
-    else:
-        solutions['facts'] = facts_solutions
-        solutions['nodesColor'] = nodes_colors
-        solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
+        if res[0] == "s UNSATISFIABLE":
+            nodes_names = []
+            solutions['facts'] = []
+            for val in nodes_ids.values():
+                nodes_names.append(val)
+            nodes_colors = [nodes_names]
+            solutions['hexColors'] = []
+            solutions['hexColors'].append('#a8a8a8')
+        else:
+            solutions['facts'] = facts_solutions
+            solutions['nodesColor'] = nodes_colors
+            solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
 
-    # read cnf file
-    with open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
-        lines = f.readlines()
-    f.close()
+        # read cnf file
+        with open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
+            lines = f.readlines()
+        f.close()
 
-    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
+        os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
 
-    #read topology json file
-    with open(os.getcwd() + "/static/" + country + "-all.geo.json", "r") as f:
-        topology = json.load(f)
-    f.close()
+        #read topology json file
+        with open(os.getcwd() + "/static/" + country + "-all.geo.json", "r") as f:
+            topology = json.load(f)
+        f.close()
 
-    solutions['data'] = nodes_colors
-    solutions['country'] = country
-    solutions['colors'] = colors
-    solutions['sat'] = res
-    solutions['cnf'] = lines
-    solutions['topology'] = topology
+        solutions['data'] = nodes_colors
+        solutions['country'] = country
+        solutions['colors'] = colors
+        solutions['sat'] = res
+        solutions['cnf'] = lines
+        solutions['topology'] = topology
 
-    # save solutions to disk in static folder
-    filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
-    with open(os.getcwd() + "/static/" + filename, "w") as f:
-        json.dump(solutions, f)
-    f.close()
+        # save solutions to disk in static folder
+        filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
+        with open(os.getcwd() + "/static/" + filename, "w") as f:
+            json.dump(solutions, f)
+        f.close()
 
     return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
 
