@@ -188,6 +188,7 @@ def run_sat(country, colors):  # put application's code here
     nodes_colors = []
     # if it was satisfiable, we want to have the assignment printed out
     if res[0] == "s SATISFIABLE" or res[0] == "sat":
+        res[0] ="s SATISFIABLE"
         # First get the assignment, which is on the second line of the file, and split it on spaces
         # Read the solution
         asgn = map(int, res[1].split()[1:])
@@ -219,6 +220,7 @@ def run_sat(country, colors):  # put application's code here
 
     # elif res[0] == "s UNSATISFIABLE":
     else:
+        res[0] = "s UNSATISFIABLE"
         nodes_names = []
         solutions['facts'] = []
         for val in nodes_ids.values():
