@@ -1,5 +1,5 @@
 # colorMapSAT
-### A SAT Solver for coloring maps
+### A SAT encoder and visualizer for coloring maps
 
 ## Project description:
 <img src="https://github.com/erickgarro/colorMapSAT/blob/main/project-colors.png?raw=true" alt="Project: Colors" width="80%">
