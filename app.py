@@ -168,13 +168,13 @@ def run_sat(country, colors):  # put application's code here
     fl.write("\n".join([head, rls]))
     fl.close()
 
-    # z3_build = sys.path[0] + '/' + './z3_linux '
-    # if platform.system() == 'Darwin':
-    #     z3_build = sys.path[0] + '/' + './z3_mac '
+    z3_build = sys.path[0] + '/' + './z3_linux ' + sys.path[0] + '/'
+    if platform.system() == 'Darwin':
+        z3_build = sys.path[0] + '/' + './z3_mac ' + sys.path[0] + '/'
 
 
     # this is for running SATsolver
-    cmd = "z3 " + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"
+    cmd = z3_build + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"
     ms_out = Popen([cmd], stdout=PIPE, shell=True).communicate()[0]
 
     # SATsolver with these arguments writes the solution to a file called "solution".  Let's check it
