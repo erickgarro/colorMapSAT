@@ -3,7 +3,6 @@ import os
 import random
 import datetime
 import platform
-import sys
 
 from flask import Flask, render_template, send_from_directory, json
 from subprocess import Popen
@@ -11,6 +10,7 @@ from subprocess import PIPE
 
 gbi = 0
 varToStr = ["invalid"]
+
 
 def generate_random_unique_colors(n_colors):
     """
@@ -115,7 +115,7 @@ def read_dict_from_csv(_filename):
     """
     global f
     nodes = {}
-    with open(_filename + ".csv", "r") as f:
+    with open('static/' + _filename + ".csv", "r") as f:
         for line in f:
             line = line.replace("\n", "").split(",")
 
@@ -166,7 +166,7 @@ def run_sat(country, colors):  # put application's code here
     timestamp = str(datetime.datetime.now().timestamp()).replace(".", "")
 
     # here we create the cnf file for SATsolver
-    fl = open(country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "w")
+    fl = open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "w")
     fl.write("\n".join([head, rls]))
     fl.close()
 
@@ -174,10 +174,8 @@ def run_sat(country, colors):  # put application's code here
     if platform.system() == 'Darwin':
         z3_build = './z3_mac '
 
-
     # this is for running SATsolver
-    cmd = z3_build + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"
-    ms_out = Popen([cmd], stdout=PIPE, shell=True).communicate()[0]
+    ms_out = Popen([z3_build + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"], stdout=PIPE, shell=True).communicate()[0]
 
     # SATsolver with these arguments writes the solution to a file called "solution".  Let's check it
     res = ms_out.decode('utf-8')
@@ -186,12 +184,10 @@ def run_sat(country, colors):  # put application's code here
     print(res)
     res = res.strip().split('\n')
     solutions = {}
-    facts_solutions = []
 
     nodes_colors = []
     # if it was satisfiable, we want to have the assignment printed out
-    if res[0] == "s SATISFIABLE" or res[0] == "sat":
-        res[0] ="s SATISFIABLE"
+    if res[0] == "s SATISFIABLE":
         # First get the assignment, which is on the second line of the file, and split it on spaces
         # Read the solution
         asgn = map(int, res[1].split()[1:])
@@ -201,7 +197,7 @@ def run_sat(country, colors):  # put application's code here
 
         # Convert the solution to our names
         facts = map(lambda x: varToStr[abs(x)], filter(lambda x: x > 0, asgn))
-        # facts_solutions = []
+        facts_solutions = []
 
         nodes_colors = [0] * colors
         for c in range(colors):
@@ -215,15 +211,10 @@ def run_sat(country, colors):  # put application's code here
             node_name = nodes_ids[int(f[0])]
             nodes_colors[int(f[1])].append(node_name)
 
-        # remove empty indexes in nodes_colors
-        nodes_colors = [x for x in nodes_colors if x]
-        solutions['facts'] = facts_solutions
-        solutions['nodesColor'] = nodes_colors
-        solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
+    # remove empty indexes in nodes_colors
+    nodes_colors = [x for x in nodes_colors if x]
 
-    # elif res[0] == "s UNSATISFIABLE":
-    else:
-        res[0] = "s UNSATISFIABLE"
+    if res[0] == "s UNSATISFIABLE":
         nodes_names = []
         solutions['facts'] = []
         for val in nodes_ids.values():
@@ -231,19 +222,18 @@ def run_sat(country, colors):  # put application's code here
         nodes_colors = [nodes_names]
         solutions['hexColors'] = []
         solutions['hexColors'].append('#a8a8a8')
-    # else:
-    #     solutions['facts'] = facts_solutions
-    #     solutions['nodesColor'] = nodes_colors
-    #     solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
+    else:
+        solutions['facts'] = facts_solutions
+        solutions['nodesColor'] = nodes_colors
+        solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
 
     # read cnf file
-    with open(country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
+    with open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
         lines = f.readlines()
     f.close()
 
     #read topology json file
-    # sys.path.insert(1, "../static/")
-    with open(country + "-all.geo.json", "r") as f:
+    with open(os.getcwd() + "/static/" + country + "-all.geo.json", "r") as f:
         topology = json.load(f)
     f.close()
 
@@ -256,12 +246,12 @@ def run_sat(country, colors):  # put application's code here
 
     # save solutions to disk in static folder
     filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
-    with open("static/" + filename, "w") as f:
+    with open(os.getcwd() + "/static/" + filename, "w") as f:
         json.dump(solutions, f)
     f.close()
 
     # cleanup CNF
-    os.remove(country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
+    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
 
     return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
 
