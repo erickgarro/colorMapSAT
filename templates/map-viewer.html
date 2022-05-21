@@ -6,38 +6,6 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
         <script src="https://code.highcharts.com/maps/highmaps.js"></script>
         <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
-    </head>
-    <body>
-          <div class="nav clearfix">
-                <select id="select-one" class="select-one" onchange="changeCountry(this.value)">
-                    <option value="">Select a country</option>
-                    <option value="cr">Costa Rica</option>
-                    <option value="ch">Switzerland</option>
-                    <option value="us">United States of America</option>
-                </select>
-                <label>How many colors?
-                    <input id="input-one" class="input-one" type="number" min="1" max="100" step="1" value="{{ colors }}" maxlength="4"
-                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength); newColors = this.value">
-                </label>
-                <button id="validate-one" class="validate-one sat-this">SAT this!</button>
-            </div>
-        <div class="titles">
-            <h1 id="title" class="clearfix"></h1>
-            <h2 id="subtitle"></h2>
-        </div>
-        <div class="grid">
-            <div id="container" class=""></div>
-            <div class="buttons">
-                <p class="download">Download files</p>
-                <button id="sat" class="get-file">SAT result</button>
-                <button id="cnf" class="get-file">CNF</button>
-                <button id="assignments" class="get-file">Assignments</button>
-            </div>
-            <div class="credits">
-                <span>Copyright &copy; 2022. Brian Bronz, Erick Garro, and Lorenzo Zaniol. Using Z3 and SAT clause generator by Martin Blicha. ToC @USI, Switzerland</span>
-            </div>
-        </div>
-    </body>
         <script type="text/javascript">
             (async () => {
     const filename = 'sol_{{country}}_{{colors}}_{{ timestamp }}.json';
@@ -79,7 +47,7 @@
             satThisButton.disabled = false;
         }
     });
-    
+
     function download(filetype, _data) {
         let text = '';
 
@@ -210,4 +178,36 @@
 
 })();
         </script>
+    </head>
+    <body>
+          <div class="nav clearfix">
+                <select id="select-one" class="select-one" onchange="changeCountry(this.value)">
+                    <option value="">Select a country</option>
+                    <option value="cr">Costa Rica</option>
+                    <option value="ch">Switzerland</option>
+                    <option value="us">United States of America</option>
+                </select>
+                <label>How many colors?
+                    <input id="input-one" class="input-one" type="number" min="1" max="100" step="1" value="{{ colors }}" maxlength="4"
+                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength); newColors = this.value">
+                </label>
+                <button id="validate-one" class="validate-one sat-this">SAT this!</button>
+            </div>
+        <div class="titles">
+            <h1 id="title" class="clearfix"></h1>
+            <h2 id="subtitle"></h2>
+        </div>
+        <div class="grid">
+            <div id="container" class=""></div>
+            <div class="buttons">
+                <p class="download">Download files</p>
+                <button id="sat" class="get-file">SAT result</button>
+                <button id="cnf" class="get-file">CNF</button>
+                <button id="assignments" class="get-file">Assignments</button>
+            </div>
+            <div class="credits">
+                <span>Copyright &copy; 2022. Brian Bronz, Erick Garro, and Lorenzo Zaniol. Using Z3 and SAT clause generator by Martin Blicha. ToC @USI, Switzerland</span>
+            </div>
+        </div>
+    </body>
 </html>
