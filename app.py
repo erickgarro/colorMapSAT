@@ -167,9 +167,9 @@ def run_sat(country, colors):  # put application's code here
     fl.write("\n".join([head, rls]))
     fl.close()
 
-    z3_build = sys.path[0] + '/' + './z3_linux ' + sys.path[0] + '/'
+    z3_build = './z3_linux '
     if platform.system() == 'Darwin':
-        z3_build = sys.path[0] + '/' + './z3_mac ' + sys.path[0] + '/'
+        z3_build = './z3_mac '
 
 
     # this is for running SATsolver
