@@ -40,7 +40,7 @@
     </body>
         <script type="text/javascript">
             (async () => {
-    const filename = 'sol_{{country}}_{{colors}}.json';
+    const filename = 'sol_{{country}}_{{colors}}_{{ timestamp }}.json';
     const response = await fetch('/data/' + filename);
     const solution = await response.json();
 

@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import datetime
 
 from flask import Flask, render_template, send_from_directory, json
 from subprocess import Popen
@@ -132,7 +133,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('INDEX.html')
+    return render_template('index.html')
 
 
 @app.route('/data/<filename>')
@@ -159,13 +160,15 @@ def run_sat(country, colors):  # put application's code here
     head = printHeader(len(rules))
     rls = printCnf(rules)
 
+    timestamp = str(datetime.datetime.now().timestamp()).replace(".", "")
+
     # here we create the cnf file for SATsolver
-    fl = open(os.getcwd() + "/colors.cnf", "w")
+    fl = open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "w")
     fl.write("\n".join([head, rls]))
     fl.close()
 
     # this is for running SATsolver
-    ms_out = Popen(["./z3 colors.cnf"], stdout=PIPE, shell=True).communicate()[0]
+    ms_out = Popen(["./z3 " + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"], stdout=PIPE, shell=True).communicate()[0]
 
     # SATsolver with these arguments writes the solution to a file called "solution".  Let's check it
     res = ms_out.decode('utf-8')
@@ -218,11 +221,13 @@ def run_sat(country, colors):  # put application's code here
         solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
 
     # read cnf file
-    with open(os.getcwd() + "/colors.cnf", "r") as f:
+    with open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
         lines = f.readlines()
     f.close()
 
-    #read topolofy json file
+    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
+
+    #read topology json file
     with open(os.getcwd() + "/static/" + country + "-all.geo.json", "r") as f:
         topology = json.load(f)
     f.close()
@@ -235,12 +240,12 @@ def run_sat(country, colors):  # put application's code here
     solutions['topology'] = topology
 
     # save solutions to disk in static folder
-    filename = "sol_" + country + "_" + str(colors) + ".json"
+    filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
     with open(os.getcwd() + "/static/" + filename, "w") as f:
         json.dump(solutions, f)
     f.close()
 
-    return render_template('map-viewer.html', country=country, colors=colors)
+    return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
 
 
 if __name__ == '__main__':
