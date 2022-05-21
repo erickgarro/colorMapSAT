@@ -150,6 +150,9 @@ def run_sat(country, colors):  # put application's code here
     # write_dict_to_csv('us' + '_nodes', nodes_graph)
     # write_dict_to_csv('us' + '_nodes_ids', us)
 
+    if abs(int(colors)) > 10000:
+        return "Too many colors"
+
     nodes_graph = read_dict_from_csv(country + '_nodes')
     nodes_ids = read_dict_from_csv(country + '_nodes_ids')
     colors = int(colors)
