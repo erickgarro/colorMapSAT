@@ -219,30 +219,30 @@ def run_sat(country, colors):  # put application's code here
             solutions['nodesColor'] = nodes_colors
             solutions['hexColors'] = generate_random_unique_colors(len(nodes_colors))
 
-        # read cnf file
-        with open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
-            lines = f.readlines()
-        f.close()
+    # read cnf file
+    with open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "r") as f:
+        lines = f.readlines()
+    f.close()
 
-        os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
+    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
 
-        #read topology json file
-        with open(os.getcwd() + "/static/" + country + "-all.geo.json", "r") as f:
-            topology = json.load(f)
-        f.close()
+    #read topology json file
+    with open(os.getcwd() + "/static/" + country + "-all.geo.json", "r") as f:
+        topology = json.load(f)
+    f.close()
 
-        solutions['data'] = nodes_colors
-        solutions['country'] = country
-        solutions['colors'] = colors
-        solutions['sat'] = res
-        solutions['cnf'] = lines
-        solutions['topology'] = topology
+    solutions['data'] = nodes_colors
+    solutions['country'] = country
+    solutions['colors'] = colors
+    solutions['sat'] = res
+    solutions['cnf'] = lines
+    solutions['topology'] = topology
 
-        # save solutions to disk in static folder
-        filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
-        with open(os.getcwd() + "/static/" + filename, "w") as f:
-            json.dump(solutions, f)
-        f.close()
+    # save solutions to disk in static folder
+    filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
+    with open(os.getcwd() + "/static/" + filename, "w") as f:
+        json.dump(solutions, f)
+    f.close()
 
     return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
 
