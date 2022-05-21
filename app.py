@@ -115,7 +115,7 @@ def read_dict_from_csv(_filename):
     """
     global f
     nodes = {}
-    with open(sys.path[0] + '/' + 'static/' + _filename + ".csv", "r") as f:
+    with open(_filename + ".csv", "r") as f:
         for line in f:
             line = line.replace("\n", "").split(",")
 
