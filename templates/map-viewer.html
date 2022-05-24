@@ -195,7 +195,14 @@
                             this.value = 100;
                         } else if(parseInt(this.value) < 0) {
                             this.value = 0
-                        } else if (parseInt(this.value) !== NaN) {
+                        }
+
+                        if (this.value.startsWith('0')) {
+                            this.value = this.value.substring(1);
+                        }
+
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                        if (this.value === '') {
                             this.value = 0;
                         }
                         newColors = this.value">
