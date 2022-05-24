@@ -136,6 +136,7 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+
 @app.route('/data/<filename>')
 def data(filename):
     return send_from_directory('static', filename)
@@ -159,35 +160,54 @@ def run_sat(country, colors):  # put application's code here
     nodes_ids = read_dict_from_csv(country + '_nodes_ids')
     colors = int(colors)
 
+    solutions, timestamp = generate_solution(colors, country, nodes_graph, nodes_ids)
+
+    while solutions['sat'][0] == "s SATISFIABLE":
+        original_solutions = solutions
+        solutions, timestamp = generate_solution(len(solutions['nodesColor']) - 1, country, nodes_graph, nodes_ids)
+        if solutions['sat'][0] == "s UNSATISFIABLE":
+            solutions = original_solutions
+            break
+
+    # save solutions to disk in static folder
+    filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
+    with open(os.getcwd() + "/static/" + filename, "w") as f:
+        json.dump(solutions, f)
+    f.close()
+
+    return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
+
+
+def generate_solution(colors, country, nodes_graph, nodes_ids):
+    solutions = {}
+    nodes_colors = []
+
+    timestamp = str(datetime.datetime.now().timestamp()).replace(".", "")
+
     varMap = gen_vars(nodes_graph, colors)
     rules = genColConstr(nodes_graph, colors, varMap)
 
     head = printHeader(len(rules))
     rls = printCnf(rules)
 
-    timestamp = str(datetime.datetime.now().timestamp()).replace(".", "")
-
     # here we create the cnf file for SATsolver
     fl = open(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf", "w")
     fl.write("\n".join([head, rls]))
     fl.close()
-
     z3_build = './z3_linux '
+
     if platform.system() == 'Darwin':
         z3_build = './z3_mac '
 
     # this is for running SATsolver
-    ms_out = Popen([z3_build + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"], stdout=PIPE, shell=True).communicate()[0]
+    ms_out = Popen([z3_build + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf"], stdout=PIPE,
+                   shell=True).communicate()[0]
 
     # SATsolver with these arguments writes the solution to a file called "solution".  Let's check it
     res = ms_out.decode('utf-8')
-
-    # Print output
     print(res)
     res = res.strip().split('\n')
-    solutions = {}
 
-    nodes_colors = []
     # if it was satisfiable, we want to have the assignment printed out
     if res[0] == "s SATISFIABLE":
         # First get the assignment, which is on the second line of the file, and split it on spaces
@@ -215,7 +235,6 @@ def run_sat(country, colors):  # put application's code here
 
     # remove empty indexes in nodes_colors
     nodes_colors = [x for x in nodes_colors if x]
-
     if res[0] == "s UNSATISFIABLE":
         nodes_names = []
         solutions['facts'] = []
@@ -234,7 +253,10 @@ def run_sat(country, colors):  # put application's code here
         lines = f.readlines()
     f.close()
 
-    #read topology json file
+    # cleanup CNF
+    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
+
+    # read topology json file
     with open(os.getcwd() + "/static/" + country + "-all.geo.json", "r") as f:
         topology = json.load(f)
     f.close()
@@ -246,16 +268,7 @@ def run_sat(country, colors):  # put application's code here
     solutions['cnf'] = lines
     solutions['topology'] = topology
 
-    # save solutions to disk in static folder
-    filename = "sol_" + country + "_" + str(colors) + "_" + timestamp + ".json"
-    with open(os.getcwd() + "/static/" + filename, "w") as f:
-        json.dump(solutions, f)
-    f.close()
-
-    # cleanup CNF
-    os.remove(os.getcwd() + "/" + country + "_" + str(colors) + "_colors" + "_" + timestamp + ".cnf")
-
-    return render_template('map-viewer.html', country=country, colors=colors, timestamp=timestamp)
+    return solutions, timestamp
 
 
 if __name__ == '__main__':
