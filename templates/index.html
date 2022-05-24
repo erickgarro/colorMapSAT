@@ -16,8 +16,23 @@
                     <option value="us">United States of America</option>
                 </select>
                 <label>How many colors?
-                    <input id="input-one" class="input-one" type="number" min="1" max="100" step="1" value="1" maxlength="4"
-                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                    <input id="input-one" class="input-one" type="number" min="1" max="100" step="1" value="{{ colors }}" maxlength="3"
+                    oninput="javascript:
+                        if (parseInt(this.value) > 100) {
+                            this.value = 100;
+                        } else if(parseInt(this.value) < 0) {
+                            this.value = 0
+                        }
+
+                        if (this.value.startsWith('0')) {
+                            this.value = this.value.substring(1);
+                        }
+
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                        if (this.value === '') {
+                            this.value = 0;
+                        }
+                        newColors = this.value">
                 </label>
                 <button id="validate-one" class="validate-one sat-this disabled" disabled>SAT this!</button>
             </div>
