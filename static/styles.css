@@ -148,7 +148,6 @@ label {
     font-size: 0.8em;
 }
 
-/*center svg with .map to middle of screen*/
 .map {
     display: flex;
     justify-content: center;
