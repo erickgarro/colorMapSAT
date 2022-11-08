@@ -1,9 +1,10 @@
 #container {
-    height: 65vh;
-    width: 80vw;
+    height: 100%;
+    width: 80%;
     margin: 0 auto;
     flex-direction: column;
     align-items: center;
+    margin: auto;
 }
 
 .grid {
@@ -148,10 +149,9 @@ label {
 }
 
 .map {
-    height: 60vh;
-    width: auto;
-    padding: 3vh 10vh 10vh 10vh;
-    display: block;
-    position: relative;
-    margins: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 100%;
+    margin: auto;
 }
