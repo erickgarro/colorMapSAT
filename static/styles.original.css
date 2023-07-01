@@ -1,0 +1,157 @@
+#container {
+    height: 100%;
+    width: 80%;
+    margin: 0 auto;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 3.6fr 0.4fr 0.2fr;
+  gap: 0em 0em;
+  grid-template-areas:
+    "."
+    "."
+    ".";
+}
+
+.info {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70vw;
+}
+
+.info p{
+    text-align: center;
+    width: 100%;
+}
+
+/*clearfix*/
+.clearfix:before{
+  content: "";
+  display: block;
+  clear: both;
+}
+
+/*class nav  display in block all centered*/
+.nav {
+  display: block;
+  text-align: center;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+* {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+}
+
+.unsat {
+    color: red;
+}
+
+.sat {
+    color: green;
+}
+
+.sat-this {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.disabled {
+    background-color: #cccccc !important;
+    color: #444444 !important;
+}
+
+.get-file {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.download {
+    margin-bottom: 0.5em;
+    font-size: 1em;
+    text-align: center;
+    color: gray;
+}
+
+.buttons {
+    margin-top: 1vh;
+    position: fixed;
+    bottom: 7vh;
+    width: 100vw;
+    text-align: center;
+}
+
+button:hover {
+    background-color: #4dc452;
+}
+
+select {
+    font-size: 1em;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 0.25em;
+}
+
+input {
+    font-size: 1em;
+    /*width-min: 4vw;*/
+    width: 3.6vw;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 0.25em;
+}
+
+label {
+   margin: 0 2em;
+}
+
+.credits {
+    position: fixed;
+    bottom: 2vh;
+    left: 0;
+    width: 100vw;
+    text-align: center;
+    color: gray;
+    font-size: 0.8em;
+}
+
+.map {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 100%;
+    margin: auto;
+}
